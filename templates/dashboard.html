@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- 📊 + 📅 Top Section -->
+<div class="grid md:grid-cols-2 gap-6 mb-6">
+
+  <!-- 📊 Weekly Chart -->
+  <div class="bg-[#111827]/80 backdrop-blur-md p-5 rounded-xl shadow">
+    
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold">📊 Weekly Progress</h2>
+
+      <div class="text-sm text-gray-400">
+        Last 7 Days
+      </div>
+    </div>
+
+    <canvas id="progressChart"></canvas>
+
+  </div>
+
+  <!-- 📅 Calendar -->
+  <div class="bg-[#111827]/80 backdrop-blur-md p-5 rounded-xl shadow">
+
+    <h2 class="text-lg font-semibold mb-4">
+      📅 Streak Calendar
+    </h2>
+
+    <div class="grid grid-cols-7 gap-3 text-center text-xs">
+
+      {% for day in calendar %}
+        <div class="flex flex-col items-center">
+
+          <!-- Day Box -->
+          <div
+            class="w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition
+
+            {% if day.completed %}
+              bg-green-500 text-black shadow-lg shadow-green-500/40
+            {% else %}
+              bg-gray-700 text-gray-400
+            {% endif %}
+          ">
+
+            {{ day.day|date:"d" }}
+
+          </div>
+
+          <!-- Day Name -->
+          <span class="text-gray-500 mt-1">
+            {{ day.day|date:"D" }}
+          </span>
+
+        </div>
+      {% endfor %}
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ➕ Add Habit -->
+<a href="/add/"
+   class="bg-blue-500 hover:bg-blue-600 px-5 py-2 rounded-lg mb-6 inline-block transition shadow">
+
+   + Add Habit
+
+</a>
+
+<!-- 📦 Habit Cards -->
+<div class="grid md:grid-cols-3 gap-5">
+
+{% if habits %}
+
+  {% for habit in habits %}
+
+    <div class="bg-[#111827]/80 backdrop-blur-md p-5 rounded-xl shadow hover:scale-105 transition duration-300">
+
+      <!-- Habit Title -->
+      <h2 class="text-2xl font-semibold mb-2">
+        {{ habit.name }}
+      </h2>
+
+      <!-- Streak -->
+      <p class="text-gray-400">
+        🔥 Streak: {{ habit.streak }}
+      </p>
+
+      <!-- Progress -->
+      <div class="w-full bg-gray-700 rounded-full h-2 mt-4 overflow-hidden">
+
+        <div
+          class="bg-green-500 h-2 rounded-full transition-all duration-500"
+          style="width: {{ habit.streak }}%">
+        </div>
+
+      </div>
+
+      <!-- Buttons -->
+      <div class="mt-5 flex gap-3">
+
+        <!-- Done -->
+        <a href="/complete/{{ habit.id }}/"
+           class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition">
+
+          Done
+
+        </a>
+
+        <!-- Delete -->
+        <a href="/delete/{{ habit.id }}/"
+           class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition">
+
+          Delete
+
+        </a>
+
+      </div>
+
+    </div>
+
+  {% endfor %}
+
+{% else %}
+
+  <div class="bg-[#111827]/80 p-6 rounded-xl text-center text-gray-400 col-span-3">
+
+    No habits yet. Start one! 🚀
+
+  </div>
+
+{% endif %}
+
+</div>
+
+<!-- 📊 CHART -->
+<script>
+
+const labels = {{ labels|safe }};
+const data = {{ data|safe }};
+
+const ctx = document.getElementById('progressChart');
+
+new Chart(ctx, {
+
+  type: 'bar',
+
+  data: {
+
+    labels: labels,
+
+    datasets: [{
+
+      label: 'Completed Habits',
+
+      data: data,
+
+      backgroundColor: '#22c55e',
+
+      borderRadius: 8,
+
+      borderSkipped: false
+
+    }]
+
+  },
+
+  options: {
+
+    responsive: true,
+
+    plugins: {
+
+      legend: {
+        display: false
+      }
+
+    },
+
+    scales: {
+
+      x: {
+
+        ticks: {
+          color: '#9ca3af'
+        },
+
+        grid: {
+          display: false
+        }
+
+      },
+
+      y: {
+
+        beginAtZero: true,
+
+        ticks: {
+
+          color: '#9ca3af',
+
+          stepSize: 1
+
+        },
+
+        grid: {
+          color: '#1f2937'
+        }
+
+      }
+
+    }
+
+  }
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-gradient-to-br from-[#020617] via-[#0f172a] to-[#020617] text-white">
+
+<div class="flex min-h-screen">
+
+  <!-- Sidebar -->
+  <div class="w-64 bg-[#020617] border-r border-gray-800 p-5 hidden md:block">
+
+    <h2 class="text-xl font-bold mb-8">Habit Tracker</h2>
+
+    <ul class="space-y-5 text-gray-300">
+
+      <li>
+        <a href="/" class="flex items-center gap-3 hover:text-blue-400 transition">
+          <i data-feather="home"></i> Dashboard
+        </a>
+      </li>
+
+      <li>
+        <a href="/add/" class="flex items-center gap-3 hover:text-blue-400 transition">
+          <i data-feather="plus"></i> Add Habit
+        </a>
+      </li>
+
+    </ul>
+
+  </div>
+
+  <!-- Main -->
+  <div class="flex-1">
+
+    <!-- Navbar -->
+    <div class="flex justify-between items-center p-4 border-b border-gray-800 bg-[#020617]/80 backdrop-blur-md">
+
+      <h1 class="text-lg font-semibold">Dashboard</h1>
+
+      <div class="flex items-center gap-4">
+
+        {% if user.is_authenticated %}
+          <div class="flex items-center gap-2 text-gray-300">
+            <i data-feather="user"></i>
+            Hello <span class="text-white font-semibold">{{ user.username }}</span>
+          </div>
+
+          <form action="/logout/" method="POST">
+            {% csrf_token %}
+            <button class="bg-red-500 px-3 py-1 rounded-lg hover:bg-red-600 transition shadow">
+              Logout
+            </button>
+          </form>
+
+        {% else %}
+          <a href="/login/" 
+             class="bg-blue-500 px-3 py-1 rounded-lg hover:bg-blue-600 transition shadow">
+            Login
+          </a>
+        {% endif %}
+
+      </div>
+
+    </div>
+
+    <!-- Content -->
+    <div class="p-6">
+      {% block content %}{% endblock %}
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  feather.replace()
+
+  // Notification permission
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+</script>
+
+</body>
+</html>
